@@ -1,6 +1,6 @@
 class HomeController {
-  static home(req, res) {
+  static home(req, res, next) {
     res.send("Hai");
   }
 }
-module.exports = { HomeController };
+module.exports = HomeController;
