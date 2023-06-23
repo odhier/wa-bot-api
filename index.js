@@ -8,7 +8,7 @@ const { Client, LocalAuth } = require("whatsapp-web.js");
 const WAClient = require("./models/WAClient");
 const { HomeController } = require("./controllers/HomeController");
 
-const port = 3000;
+const port = 3001;
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
@@ -71,10 +71,18 @@ app.get("/checkWAAuth", (req, res) => {
     status: WA_Client.isAuthenticated,
   });
 });
-app.get("/send-wa-message", async (req, res) => {
+app.post("/send-wa-message", async (req, res) => {
+  let resp
+  try{
+    console.log(req)
   const { wa_number, message, token_key } = req.body;
+  
+  console.log(message)
   if (token_key != tokenKey) return res.send({ error: "unauthorized" });
-  let resp;
+  resp = {
+      status: "success",
+      message: `Berhasil Mengirimkan Pesan ke nomor : ${wa_number}`,
+    };;
   let sanitized_number = wa_number.toString().replace(/[^a-zA-Z0-9 ]/g, "");
   let final_number = `${sanitized_number}`;
   let number_details = await WA_Client.client.getNumberId(final_number); // get mobile number details
@@ -97,7 +105,10 @@ app.get("/send-wa-message", async (req, res) => {
       message: "Koneksi Whatsapp Gagal",
     };
   }
-
+}catch(err){
+  console.log(err)
+}
+  
   res.json(resp);
 });
 
