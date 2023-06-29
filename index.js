@@ -6,11 +6,11 @@ const fs = require("fs");
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const WAClient = require("./models/WAClient");
-const { HomeController } = require("./controllers/HomeController");
-
+const UserController = require('./controllers/UserController');
 const port = 3001;
 const app = express();
 const http = require("http");
+const User = require("./models/Users");
 const server = http.createServer(app);
 require("dotenv").config();
 const tokenKey = process.env.TOKEN_KEY;
@@ -61,11 +61,12 @@ io.on("connection", function (socket) {
     console.log("AUTHENTICATED");
   });
 });
-
+// User.sync({force: true});
 //route
 app.get("/", (req, res) => {
   res.sendFile("index.html", { root: __dirname });
 });
+app.post("/login", UserController.login)
 app.get("/checkWAAuth", (req, res) => {
   res.json({
     status: WA_Client.isAuthenticated,
